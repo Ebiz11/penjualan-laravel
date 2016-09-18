@@ -23,9 +23,11 @@
             </li>
 
             <li>
-                <a href="#"><i class="fa fa-th-large"></i> <span class="nav-label">Home</span></a>
+                <a href="{{url('/')}}"><i class="fa fa-th-large"></i> <span class="nav-label">Home</span></a>
                 <a href="#"><i class=" fa fa-shopping-cart"></i> <span class="nav-label">Transaksi</span></a>
-                <a href="#"><i class="fa fa-folder-o"></i> <span class="nav-label">Master Barang</span></a>
+                <a href="{{url('barang')}}"><i class="fa fa-folder-o"></i> <span class="nav-label">Master Barang</span></a>
+                <a href="#"><i class="fa fa-folder-o"></i> <span class="nav-label">Penjualan</span></a>
+                <a href="#"><i class="fa fa-folder-o"></i> <span class="nav-label">Grafik</span></a>
             </li>
 
         </ul>
