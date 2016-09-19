@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 Use App\Barang;
+Use App\Pembelian;
+Use App\Transaksi;
 use Datatables;
 use App\Http\Requests;
 
@@ -39,16 +41,56 @@ class BarangController extends Controller
         $this->validate($request, [
           'nama_barang' => 'required',
           'harga_jual' => 'required',
+          'harga_jual_pack' => 'required',
+          'total' => 'required',
           'stok' => 'required'
         ]);
 
         $tambah = new Barang();
         $tambah->nama_barang = $request['nama_barang'];
         $tambah->harga_jual = $request['harga_jual'];
-        $tambah->stok = $request['stok'];
-        $save = $tambah->save();
+        $tambah->harga_jual_pack = $request['harga_jual_pack'];
+        $tambah->stok = 0; //jangan lupa trigger pembelian
+        $tambah->save();
+        $LastInsertId_barang = $tambah->id_barang;
 
-        // return redirect()->to('/barang');
+        $LastInsertId_transaksi = $this->transaksi_pembelian($request['total']); // insert transaksi pembelian
+        $this->pembelian($LastInsertId_barang, $LastInsertId_transaksi, $request['stok'], $request['total']); //insert pembelian
+
+    }
+
+    public function stok(Request $request)
+    {
+        $this->validate($request, [
+          'id_barang' => 'required',
+          'jumlah' => 'required',
+          'total' => 'required'
+        ]);
+
+        $LastInsertId_transaksi = $this->transaksi_pembelian($request['total']); // insert transaksi pembelian
+        $this->pembelian($request['id_barang'], $LastInsertId_transaksi, $request['jumlah'], $request['total']); //insert pembelian
+    }
+
+    public function transaksi_pembelian($total)
+    {
+        $tambah = new Transaksi();
+        $tambah->total = $total;
+        $tambah->jenis = "beli";
+        $tambah->save();
+        $LastInsertId_transaksi = $tambah->id_transaksi;
+        return $LastInsertId_transaksi;
+    }
+
+    public function pembelian($LastInsertId_barang, $LastInsertId_transaksi, $stok, $total)
+    {
+        $id_supplier =1;
+        $beli = new Pembelian();
+        $beli->id_barang = $LastInsertId_barang;
+        $beli->id_transaksi = $LastInsertId_transaksi;
+        $beli->id_supplier = $id_supplier;
+        $beli->jumlah = $stok;
+        $beli->sub_total = $total;
+        $beli->save();
     }
 
     /**
@@ -88,8 +130,9 @@ class BarangController extends Controller
        $update = Barang::where('id_barang', $request['id_barangEdit'])->first();
        $update->nama_barang = $request['nama_barangEdit'];
        $update->harga_jual = $request['harga_jualEdit'];
+       $update->harga_jual_pack = $request['harga_jual_packEdit'];
        $update->stok = $request['stokEdit'];
-       $msg = $update->update();
+       $update->update();
        return redirect()->to('/barang');
     }
 

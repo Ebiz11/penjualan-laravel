@@ -17,11 +17,10 @@ Route::group(['middleware' => ['web']], function () {
     });
     Route::get('/barang', 'BarangController@index');
     Route::get('/show', 'BarangController@show');
+    Route::get('/stok', 'BarangController@stok');
     Route::get('/create', 'BarangController@create');
     Route::get('/store', 'BarangController@store');
-    // Route::get('/edit/{id}', 'BarangController@edit');
     Route::get('/update', 'BarangController@update');
     Route::get('/destroy', 'BarangController@destroy');
-
     Route::get('/getBarang','BarangController@getBarang');
 });
